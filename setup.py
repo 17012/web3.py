@@ -8,7 +8,7 @@ from setuptools import (
 extras_require = {
     'tester': [
         "eth-tester[py-evm]==v0.5.0-beta.4",
-        "py-geth>=3.4.0,<4",
+        "py-geth>=3.5.0,<4",
     ],
     'linter': [
         "flake8==3.8.3",
@@ -21,7 +21,7 @@ extras_require = {
         "click>=5.1",
         "configparser==3.5.0",
         "contextlib2>=0.5.4",
-        "py-geth>=3.4.0,<4",
+        "py-geth>=3.5.0,<4",
         "py-solc>=0.4.0",
         "pytest>=4.4.0,<5.0.0",
         "sphinx>=3.0,<4",
@@ -63,7 +63,7 @@ with open('./README.md') as readme:
 setup(
     name='web3',
     # *IMPORTANT*: Don't manually change the version here. Use the 'bumpversion' utility.
-    version='5.22.0',
+    version='version='5.23.1',',
     description="""Web3.py""",
     long_description_content_type='text/markdown',
     long_description=long_description,
@@ -79,7 +79,7 @@ setup(
         "eth-typing>=2.0.0,<3.0.0",
         "eth-utils>=1.9.5,<2.0.0",
         "hexbytes>=0.1.0,<1.0.0",
-        "ipfshttpclient==0.7.0",
+        "ipfshttpclient==0.8.0a2",
         "jsonschema>=3.2.0,<4.0.0",
         "lru-dict>=1.1.6,<2.0.0",
         "protobuf>=3.10.0,<4",

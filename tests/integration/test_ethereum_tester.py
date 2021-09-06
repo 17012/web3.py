@@ -276,12 +276,25 @@ class TestEthereumTesterEthModule(EthModuleTest):
         EthModuleTest.test_eth_get_raw_transaction, ValueError)
     test_eth_get_raw_transaction_raises_error = not_implemented(
         EthModuleTest.test_eth_get_raw_transaction, ValueError)
+    test_eth_max_priority_fee = not_implemented(EthModuleTest.test_eth_max_priority_fee, ValueError)
 
     def test_eth_getBlockByHash_pending(
         self, web3: "Web3"
     ) -> None:
         block = web3.eth.get_block('pending')
         assert block['hash'] is not None
+
+    @pytest.mark.xfail(reason='eth_feeHistory is not implemented on eth-tester')
+    def test_eth_fee_history(self, web3: "Web3"):
+        super().test_eth_fee_history(web3)
+
+    @pytest.mark.xfail(reason='eth_feeHistory is not implemented on eth-tester')
+    def test_eth_fee_history_with_integer(self, web3: "Web3"):
+        super().test_eth_fee_history_with_integer(web3)
+
+    @pytest.mark.xfail(reason='eth_feeHistory is not implemented on eth-tester')
+    def test_eth_fee_history_no_reward_percentiles(self, web3: "Web3"):
+        super().test_eth_fee_history_no_reward_percentiles(web3)
 
     @pytest.mark.xfail(reason='EIP 1559 is not implemented on eth-tester')
     def test_eth_get_transaction_receipt_unmined(self, eth_tester, web3, unlocked_account):
@@ -459,6 +472,20 @@ class TestEthereumTesterEthModule(EthModuleTest):
     @pytest.mark.xfail(reason='EIP 1559 is not implemented on eth-tester')
     def test_eth_send_transaction(self, web3, emitter_contract_address):
         super().test_eth_send_transaction(web3, emitter_contract_address)
+
+    @pytest.mark.xfail(reason='EIP 1559 is not implemented on eth-tester')
+    def test_gas_price_from_strategy_bypassed_for_dynamic_fee_txn(self, emitter_contract_address):
+        super().test_gas_price_from_strategy_bypassed_for_dynamic_fee_txn(
+            self, web3, emitter_contract_address, None, None, None
+        )
+
+    @pytest.mark.xfail(reason='EIP 1559 is not implemented on eth-tester')
+    def test_gas_price_from_strategy_bypassed_for_dynamic_fee_txn_no_tip(
+        self, emitter_contract_address
+    ):
+        super().test_gas_price_from_strategy_bypassed_for_dynamic_fee_txn_no_tip(
+            self, web3, emitter_contract_address, None, None, None
+        )
 
     @pytest.mark.xfail(reason='EIP 1559 is not implemented on eth-tester')
     def test_eth_sendTransaction_deprecated(self, web3, emitter_contract_address):

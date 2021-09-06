@@ -117,6 +117,18 @@ The following properties are available on the ``web3.eth`` namespace.
         906
 
 
+.. py:attribute:: Eth.max_priority_fee
+
+    * Delegates to ``eth_maxPriorityFeePerGas`` RPC Method
+
+    Returns a suggestion for a max priority fee for dynamic fee transactions in Wei.
+
+    .. code-block:: python
+
+        >>> web3.eth.max_priority_fee
+        2000000000
+
+
 .. py:attribute:: Eth.gas_price
 
     * Delegates to ``eth_gasPrice`` RPC Method
@@ -761,7 +773,7 @@ The following methods are available on the ``web3.eth`` namespace.
     * ``maxPriorityFeePerGas``: ``integer or hex`` - (optional) the part of the fee
       that goes to the miner
     * ``gasPrice``: ``integer`` - Integer of the gasPrice used for each paid gas
-      **LEGACY** - unless you have good reason to, use ``maxFeePerGas``
+      **LEGACY** - unless you have a good reason to use ``gasPrice``, use ``maxFeePerGas``
       and ``maxPriorityFeePerGas`` instead.
     * ``value``: ``integer`` - (optional) Integer of the value send with this
       transaction
@@ -781,14 +793,14 @@ The following methods are available on the ``web3.eth`` namespace.
 
     .. code-block:: python
 
-        # simple example (Web3.py determines gas and fee)
+        # simple example (Web3.py and / or client determines gas and fees, typically defaults to a dynamic fee transaction post London fork)
         >>> web3.eth.send_transaction({
           'to': '0xd3CdA913deB6f67967B99D67aCDFa1712C293601',
           'from': web3.eth.coinbase,
           'value': 12345
         })
 
-        # EIP 1559-style transaction
+        # Dynamic fee transaction, introduced by EIP-1559:
         HexBytes('0xe670ec64341771606e55d6b4ca35a1a6b75ee3d5145a99d05921026d1527331')
         >>> web3.eth.send_transaction({
           'to': '0xd3CdA913deB6f67967B99D67aCDFa1712C293601',
@@ -1033,6 +1045,44 @@ The following methods are available on the ``web3.eth`` namespace.
     Overriding state is a debugging feature available in Geth clients.
     View their `usage documentation <https://geth.ethereum.org/docs/rpc/ns-eth#3-object---state-override-set>`_
     for a list of possible parameters.
+
+
+.. py:method:: Eth.fee_history(block_count, newest_block, reward_percentiles=None)
+
+    * Delegates to ``eth_feeHistory`` RPC Method
+
+    Returns transaction fee data for up to 1,024 blocks.
+
+    :param block_count: The number of blocks in the requested range. Depending on the client, this
+        value should be either a :py:class:`int` between 1 and 1024 or a hexstring.
+        Less than requested may be returned if not all blocks are available.
+    :type block_count: int or hexstring
+    :param newest_block: The newest, highest-numbered, block in the requested range. This value may be an
+        :py:class:`int` or one of the predefined block parameters ``'latest'``, ``'earliest'``, or ``'pending'``.
+    :type newest_block: int or BlockParams
+    :param reward_percentiles: *(optional)* A monotonically increasing list of percentile :py:class:`float` values to
+        sample from each block's effective priority fees per gas in ascending order, weighted by gas used.
+    :type reward_percentiles: List[float] or None
+    :return: An ``AttributeDict`` containing the following keys:
+
+    * **oldestBlock** *(int)* -- The oldest, lowest-numbered, block in the range requested as a ``BlockNumber`` type
+      with :py:class:`int` value.
+    * **baseFeePerGas** *(List[Wei])* -- An array of block base fees per gas. This includes the next block after the
+      newest of the returned range, because this value can be derived from the newest block. Zeroes are returned for
+      pre-EIP-1559 blocks.
+    * **gasUsedRatio** *(List[float])* -- An array of ``gasUsed``/``gasLimit`` float values for the requested blocks.
+    * **reward** *(List[List[Wei]])* -- *(optional)* A two-dimensional array of effective priority fees per gas at the
+      requested block percentiles.
+
+    .. code-block:: python
+
+        >>> w3.eth.fee_history(4, 'latest', [10, 90])
+        AttributeDict({
+            'oldestBlock': 3,
+            'reward': [[220, 7145389], [1000000, 6000213], [550, 550], [125, 12345678]],
+            'baseFeePerGas': [202583058, 177634473, 155594425, 136217133, 119442408],
+            'gasUsedRatio': [0.007390479689642084, 0.0036988514889990873, 0.0018512333048507866, 0.00741217041320997]
+        })
 
 
 .. py:method:: Eth.estimate_gas(transaction, block_identifier=None)

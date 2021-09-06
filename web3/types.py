@@ -144,6 +144,13 @@ class FilterParams(TypedDict, total=False):
     topics: Sequence[Optional[Union[_Hash32, Sequence[_Hash32]]]]
 
 
+class FeeHistory(TypedDict):
+    baseFeePerGas: List[Wei]
+    gasUsedRatio: List[float]
+    oldestBlock: BlockNumber
+    reward: List[List[Wei]]
+
+
 class LogReceipt(TypedDict):
     address: ChecksumAddress
     blockHash: HexBytes
@@ -191,7 +198,7 @@ TxParams = TypedDict("TxParams", {
     "gas": Wei,
     # legacy pricing
     "gasPrice": Wei,
-    # 1559 pricing
+    # dynamic fee pricing
     "maxFeePerGas": Union[str, Wei],
     "maxPriorityFeePerGas": Union[str, Wei],
     "nonce": Nonce,
